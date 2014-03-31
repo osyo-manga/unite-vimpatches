@@ -3,7 +3,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let s:V = vital#of("vital")
+let s:V = vital#of("unite_vimpatches")
 let s:HTTP = s:V.import("Web.HTTP")
 let s:url = "http://vim-jp.herokuapp.com/patches/json"
 
@@ -23,18 +23,19 @@ unlet s:action
 
 
 
-function! s:get_patches(...)
-	if exists("s:patches_cache") && !get(a:, 1, 0)
-		return deepcopy(s:patches_cache)
+let s:patches_caches = {}
+function! s:get_patches(cnt, ...)
+	if has_key(s:patches_caches, a:cnt) && !get(a:, 1, 0)
+		return deepcopy(s:patches_caches[a:cnt])
 	endif
 	echo "unite-vimpatches:caching..."
-	let result = s:HTTP.request(s:url)
+	let result = s:HTTP.request(s:url . "?count=" . a:cnt)
 	if result.success != 1
 		throw "unite-vimpatches:Failed HTTP request."
 		return []
 	endif
-	let s:patches_cache = eval(result.content)
-	return deepcopy(s:patches_cache)
+	let s:patches_caches[a:cnt] = eval(result.content)
+	return deepcopy(s:patches_caches[a:cnt])
 endfunction
 
 
@@ -43,13 +44,15 @@ let s:source = {
 \	"description" : "vim patches"
 \}
 
-function! s:source.gather_candidates(...)
-	return map(s:get_patches(), '{
+function! s:source.gather_candidates(args, context)
+	let cnt = get(a:args, 0, 500)
+	return map(s:get_patches(cnt), '{
 \		"word" : printf("%s : %s", v:val.id, v:val.description),
 \		"kind" : "uri",
 \		"action__path" : v:val.link,
 \	}')
 endfunction
+
 
 function! unite#sources#vimpatches#define()
 	return s:source
