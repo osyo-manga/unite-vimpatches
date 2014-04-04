@@ -50,6 +50,7 @@ function! s:source.gather_candidates(args, context)
 \		"word" : printf("%s : %s", v:val.id, v:val.description),
 \		"kind" : "uri",
 \		"action__path" : v:val.link,
+\		"source__vimpatch" : v:val
 \	}')
 endfunction
 
