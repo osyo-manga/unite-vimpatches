@@ -24,9 +24,9 @@ function! unite#sources#vimpatches#open(version, ...)
 	endif
 	exec opencmd
 	silent $ put = result.content
+	normal! gg
     setlocal bufhidden=hide buftype=nofile noswapfile nobuflisted
-endfunctio echo unite#sources#vimpatches#open("7.4.415")
-" 	7.4.415
+endfunction
 
 
 let s:action = {
