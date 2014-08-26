@@ -23,7 +23,7 @@ function! unite#sources#vimpatches#open(version, ...)
 		return []
 	endif
 	exec opencmd
-	silent $ put = result.content
+	call append(0, split(result.content, "\n"))
 	normal! gg
     setlocal bufhidden=hide buftype=nofile noswapfile nobuflisted
 endfunction
