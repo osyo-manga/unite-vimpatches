@@ -2,7 +2,7 @@ scriptencoding utf-8
 let s:save_cpo = &cpo
 set cpo&vim
 
-
+call vital#of("unite_vimpatches").unload()
 let s:V = vital#of("unite_vimpatches")
 
 
@@ -42,8 +42,23 @@ function! vimpatches#open(version, ...)
 	execute opencmd
 	execute "edit" bufname
 	setlocal bufhidden=hide buftype=nofile noswapfile nobuflisted
-	call setline(1, "Loading...")
+	call setline(1, "Loading")
+
 	let process.bufnr = bufnr("%")
+
+	let anim = {
+\		"process" : process,
+\		"count"   : 0,
+\		"bufnr"   : bufnr("%")
+\	}
+	function! anim.apply(parent, ...)
+		if self.process.is_exit()
+			return a:parent.kill(self)
+		endif
+		call s:Buffer.setbufline(self.bufnr, 1, "Loading" . repeat(".", self.count % 5))
+		let self.count += 1
+	endfunction
+	call s:Reunions.register(anim)
 endfunction
 
 
