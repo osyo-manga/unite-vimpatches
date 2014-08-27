@@ -6,6 +6,7 @@ set cpo&vim
 let s:V = vital#of("unite_vimpatches")
 let s:HTTP = s:V.import("Web.HTTP")
 let s:JSON = s:V.import("Web.JSON")
+let s:Reunions = s:V.import("Reunions")
 let s:url = "http://vim-jp.herokuapp.com/patches/json"
 
 
@@ -45,18 +46,16 @@ unlet s:action
 
 let s:patches_caches = {}
 function! s:get_patches(cnt, ...)
-	if has_key(s:patches_caches, a:cnt) && !get(a:, 1, 0)
-		return deepcopy(s:patches_caches[a:cnt])
+	if !has_key(s:patches_caches, a:cnt)
+		let s:patches_caches[a:cnt] = s:Reunions.http_get(s:url . "?count=" . a:cnt)
 	endif
-	echo "unite-vimpatches:caching..."
-	let result = s:HTTP.request(s:url . "?count=" . a:cnt)
-	if result.success != 1
-		throw "unite-vimpatches:Failed HTTP request."
+	if s:patches_caches[a:cnt].is_exit()
+		return s:JSON.decode(s:patches_caches[a:cnt].get().content)
+	else
 		return []
 	endif
-	let s:patches_caches[a:cnt] = s:JSON.decode(result.content)
-	return deepcopy(s:patches_caches[a:cnt])
 endfunction
+
 
 
 let s:source = {
@@ -67,18 +66,27 @@ let s:source = {
 \			"is_selectable" : 0,
 \		},
 \	},
+\	"count" : 0,
 \}
 
 
 function! s:source.action_table.openbuf.func(candidate)
-	echo "open " . a:candidate.source__vimpatch.id . " ..."
-	call unite#sources#vimpatches#open(a:candidate.source__vimpatch.id)
+" 	echo "open " . a:candidate.source__vimpatch.id . " ..."
+" 	call unite#sources#vimpatches#open(a:candidate.source__vimpatch.id)
 endfunction
 
 
-function! s:source.gather_candidates(args, context)
+function! s:source.async_gather_candidates(args, context)
+	let a:context.source.unite__cached_candidates = []
+	call s:Reunions.update()
 	let cnt = get(a:args, 0, 500)
-	return map(s:get_patches(cnt), '{
+	let result = s:get_patches(cnt)
+	if empty(result)
+		let self.count += 1
+		return [{ "word" : "Donwload patches" . repeat(".", self.count % 5) }]
+	endif
+	let a:context.is_async = 0
+	return map(result, '{
 \		"word" : printf("%s : %s", v:val.id, v:val.description),
 \		"kind" : "uri",
 \		"action__path" : v:val.link,
