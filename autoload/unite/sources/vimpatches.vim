@@ -71,8 +71,8 @@ let s:source = {
 
 
 function! s:source.action_table.openbuf.func(candidate)
-" 	echo "open " . a:candidate.source__vimpatch.id . " ..."
-" 	call unite#sources#vimpatches#open(a:candidate.source__vimpatch.id)
+	echo "open " . a:candidate.source__vimpatch.id . " ..."
+	call unite#sources#vimpatches#open(a:candidate.source__vimpatch.id)
 endfunction
 
 
