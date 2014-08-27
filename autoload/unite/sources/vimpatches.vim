@@ -46,12 +46,20 @@ let s:source = {
 \		"openbuf" : {
 \			"is_selectable" : 0,
 \		},
+\		"open" : {
+\			"is_selectable" : 0,
+\		},
 \	},
 \	"count" : 0,
 \}
 
 
 function! s:source.action_table.openbuf.func(candidate)
+	call vimpatches#open(a:candidate.source__vimpatch.id)
+endfunction
+
+
+function! s:source.action_table.open.func(candidate)
 	call vimpatches#open(a:candidate.source__vimpatch.id)
 endfunction
 
