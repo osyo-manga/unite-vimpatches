@@ -3,31 +3,12 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let s:V = vital#of("unite_vimpatches")
-let s:HTTP = s:V.import("Web.HTTP")
-let s:JSON = s:V.import("Web.JSON")
-let s:Reunions = s:V.import("Reunions")
+let s:HTTP = vimpatches#vital_import("Web.HTTP")
+let s:JSON = vimpatches#vital_import("Web.JSON")
+let s:Reunions = vimpatches#vital_import("Reunions")
+let s:Buffer = vimpatches#vital_import("Coaster.Buffer")
+
 let s:url = "http://vim-jp.herokuapp.com/patches/json"
-
-
-function! unite#sources#vimpatches#open(version, ...)
-	let opencmd = get(a:, 1, "new")
-	let pattern = '\(\d\.\d\)\.\(\d\+\)'
-	if a:version !~ pattern
-		return -1
-	endif
-	let _ = matchlist(a:version, pattern)
-	let url = "http://ftp.vim.org/vim/patches/" . _[1] . "/" . a:version
-	let result = s:HTTP.request(url)
-	if result.success != 1
-		throw "unite-vimpatches:Failed HTTP request."
-		return []
-	endif
-	exec opencmd
-	call append(0, split(result.content, "\n"))
-	normal! gg
-    setlocal bufhidden=hide buftype=nofile noswapfile nobuflisted
-endfunction
 
 
 let s:action = {
@@ -71,8 +52,7 @@ let s:source = {
 
 
 function! s:source.action_table.openbuf.func(candidate)
-	echo "open " . a:candidate.source__vimpatch.id . " ..."
-	call unite#sources#vimpatches#open(a:candidate.source__vimpatch.id)
+	call vimpatches#open(a:candidate.source__vimpatch.id)
 endfunction
 
 
