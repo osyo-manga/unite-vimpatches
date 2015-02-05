@@ -71,7 +71,8 @@ function! s:source.async_gather_candidates(args, context)
 	let result = s:get_patches(cnt)
 	if empty(result)
 		let self.count += 1
-		return [{ "word" : "Donwload patches" . repeat(".", self.count % 5) }]
+		let icon = ["-", "\\", "|", "/"]
+		return [{ "word" : icon[self.count % len(icon)] . " Donwload patches" . repeat(".", self.count % 5) }]
 	endif
 	let a:context.is_async = 0
 	return map(result, '{
@@ -86,6 +87,11 @@ endfunction
 function! unite#sources#vimpatches#define()
 	return s:source
 endfunction
+
+
+if expand("%:p") == expand("<sfile>:p")
+	call unite#define_source(s:source)
+endif
 
 
 let &cpo = s:save_cpo
