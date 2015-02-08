@@ -11,6 +11,7 @@ let s:Buffer = vimpatches#vital_import("Coaster.Buffer")
 let s:url = "http://vim-jp.herokuapp.com/patches/json"
 
 
+
 let s:action = {
 \	'description' : 'ref-lynx',
 \	'is_selectable' : 0,
@@ -36,7 +37,6 @@ function! s:get_patches(cnt, ...)
 		return []
 	endif
 endfunction
-
 
 
 let s:source = {
@@ -72,7 +72,7 @@ function! s:source.async_gather_candidates(args, context)
 	if empty(result)
 		let self.count += 1
 		let icon = ["-", "\\", "|", "/"]
-		return [{ "word" : icon[self.count % len(icon)] . " Donwload patches" . repeat(".", self.count % 5) }]
+		return [{ "word" : icon[self.count % len(icon)] . " Download patches" . repeat(".", self.count % 5) }]
 	endif
 	let a:context.is_async = 0
 	return map(result, '{
