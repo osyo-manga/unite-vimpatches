@@ -8,7 +8,7 @@ let s:JSON = vimpatches#vital_import("Web.JSON")
 let s:Reunions = vimpatches#vital_import("Reunions")
 let s:Buffer = vimpatches#vital_import("Coaster.Buffer")
 
-let s:url = "http://vim-jp.herokuapp.com/patches/json"
+let s:url = "https://vim-jp.herokuapp.com/patches/json"
 
 
 
