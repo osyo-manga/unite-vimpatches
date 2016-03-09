@@ -76,10 +76,13 @@ function! s:source.async_gather_candidates(args, context)
 	endif
 	let a:context.is_async = 0
 	return map(result, '{
-\		"word" : printf("%s : %s", v:val.id, v:val.description),
+\		"word" : printf("%s : %s", v:val.id,
+\			substitute(substitute(v:val.description, "\n$", "", ""),
+\			"Solution:", repeat(" ", len(v:val.id) + 2)."Solution:", "")),
 \		"kind" : "uri",
+\		"is_multiline" : 1,
 \		"action__path" : v:val.link,
-\		"source__vimpatch" : v:val
+\		"source__vimpatch" : v:val,
 \	}')
 endfunction
 
