@@ -8,7 +8,7 @@ let s:JSON = vimpatches#vital_import("Web.JSON")
 let s:Reunions = vimpatches#vital_import("Reunions")
 let s:Buffer = vimpatches#vital_import("Coaster.Buffer")
 
-let s:url = "http://vim-jp.herokuapp.com/patches/json"
+let s:url = "https://vim-jp.herokuapp.com/patches/json"
 
 
 
@@ -76,10 +76,13 @@ function! s:source.async_gather_candidates(args, context)
 	endif
 	let a:context.is_async = 0
 	return map(result, '{
-\		"word" : printf("%s : %s", v:val.id, v:val.description),
+\		"word" : printf("%s : %s", v:val.id,
+\			substitute(substitute(v:val.description, "\n$", "", ""),
+\			"Solution:", repeat(" ", len(v:val.id) + 2)."Solution:", "")),
 \		"kind" : "uri",
+\		"is_multiline" : 1,
 \		"action__path" : v:val.link,
-\		"source__vimpatch" : v:val
+\		"source__vimpatch" : v:val,
 \	}')
 endfunction
 
